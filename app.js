@@ -9,6 +9,9 @@ if (process.env.NODE_ENV !== 'production') {
   require("dotenv").config();
 }
 
+const User = require("./models/user-model");
+const Form = require("./models/form-model");
+
 const port = process.env.PORT || 3300;
 
 const app = express();
@@ -16,6 +19,10 @@ const app = express();
 // import all error controllers here
 const corsError = require("./middleware/error-handlers/cors-err");
 const centralError = require("./middleware/error-handlers/err");
+
+// all routes here
+const authRoutes = require("./routes/auth-routes");
+const userRoutes = require("./routes/user-routes");
 
 //multer file storage
 const fileStorage = multer.diskStorage({
@@ -40,7 +47,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(__dirname));
 
@@ -56,6 +63,9 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 
 //handling the cors error here
 app.use(corsError.corsErr);
+
+app.use("/auth", authRoutes);
+app.use("/user", userRoutes);
 
 app.use(helmet());
 app.use(compression());
