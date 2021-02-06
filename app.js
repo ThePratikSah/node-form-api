@@ -66,6 +66,19 @@ app.use(corsError.corsErr);
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.get("/", (async (req, res, next) => {
+  try {
+    const value = await Form.findAll();
+    res.status(200).json({
+      value
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+}))
 
 app.use(helmet());
 app.use(compression());
