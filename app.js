@@ -66,9 +66,19 @@ app.use(corsError.corsErr);
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+
+User.hasMany(Form, {foreignKey: 'userId'})
+Form.belongsTo(User, {foreignKey: 'userId'})
+
 app.get("/", (async (req, res, next) => {
   try {
-    const value = await Form.findAll();
+    const value = await Form.findAll({
+      include: [{
+        model: User,
+        required: true,
+        attributes: ['phone']
+      }]
+    });
     res.status(200).json({
       value
     });
